@@ -35,6 +35,7 @@ already
 also
 although
 always
+ain
 am
 amid
 amidst
@@ -359,6 +360,7 @@ know
 known
 knows
 l
+ll
 largely
 last
 lately

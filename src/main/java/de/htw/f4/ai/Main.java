@@ -22,6 +22,8 @@ public class Main {
         try (JavaSparkContext jsc = new JavaSparkContext(sparkConf)) {
             HelpFunctions helpFunctions = new HelpFunctions();
 
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> dumy = countTop10WordsAndTime(FILE, jsc, helpFunctions);
+            // (<Top10Words and Count>, WordsCountInCorpus, TimeToCompute)
             Tuple3<List<Tuple2<String, Integer>>, Long, Long> simple_corpus = countTop10WordsAndTime(FILE, jsc, helpFunctions);
             Tuple3<List<Tuple2<String, Integer>>, Long, Long> double_corpus = countTop10WordsAndTime(FILE_2, jsc, helpFunctions);
             Tuple3<List<Tuple2<String, Integer>>, Long, Long> quadratic_corpus = countTop10WordsAndTime(FILE_4, jsc, helpFunctions);
@@ -33,8 +35,8 @@ public class Main {
     }
 
     private static Tuple3<List<Tuple2<String, Integer>>, Long, Long> countTop10WordsAndTime(String file, JavaSparkContext jsc, HelpFunctions helpFunctions) {
-        long startTime = System.nanoTime();
         JavaRDD<String> rddLines = jsc.textFile(file, 4);
+        long startTime = System.nanoTime();
         JavaRDD<String> rddWords = helpFunctions.splitAndCleanLines(rddLines);
         JavaRDD<Tuple2<String, Integer>> wordsFreqSortedRDD = helpFunctions.countWords(rddWords);
         List<Tuple2<String, Integer>> wordsFreqSorted = wordsFreqSortedRDD.collect();

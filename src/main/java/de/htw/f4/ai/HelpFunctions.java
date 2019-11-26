@@ -1,28 +1,17 @@
 package de.htw.f4.ai;
 
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import scala.Tuple2;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class HelpFunctions {
 
@@ -52,6 +41,6 @@ public class HelpFunctions {
                 .mapToPair(word -> new Tuple2<>(word, 1))
                 .reduceByKey(Integer::sum)
                 .map(t -> t)
-                .sortBy(pair -> pair._2, false, 1);
+                .sortBy(pair -> pair._2, false, 4);
     }
 }
