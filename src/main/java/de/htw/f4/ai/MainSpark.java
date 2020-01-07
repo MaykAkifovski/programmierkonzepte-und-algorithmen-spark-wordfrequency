@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class Main {
+public class MainSpark {
 
     private static final String FILE = Thread.currentThread().getContextClassLoader().getResource("The_Adventures_of_Tom_Sawyer.txt").getPath();
     private static final String FILE_2 = Thread.currentThread().getContextClassLoader().getResource("The_Adventures_of_Tom_Sawyer_2.txt").getPath();
