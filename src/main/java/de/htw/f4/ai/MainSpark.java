@@ -54,6 +54,11 @@ public class MainSpark {
             Tuple3<List<Tuple2<String, Integer>>, Long, Long> quadratic_corpus = countTop10WordsAndTime(file_4, numberOfPartitions, jsc, helpFunctions);
             Tuple3<List<Tuple2<String, Integer>>, Long, Long> all_texts = countTop10WordsAndTime(file_all, numberOfPartitions, jsc, helpFunctions);
 
+            System.out.println("    Spark - "+ numberOfPartitions + " Partitions");
+            System.out.println("Single Tom Sawyer: " + simple_corpus._3() + " ms");
+            System.out.println("Double Tom Sawyer: " + double_corpus._3() + " ms");
+            System.out.println("Quadr. Tom Sawyer: " + quadratic_corpus._3() + " ms");
+            System.out.println("All Files        : " + all_texts._3() + " ms\n");
 
             jsc.stop();
         }

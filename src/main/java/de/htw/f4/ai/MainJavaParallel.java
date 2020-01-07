@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MainJava {
+public class MainJavaParallel {
     private static final String FILE = "The_Adventures_of_Tom_Sawyer.txt";
     private static final String FILE_2 = "The_Adventures_of_Tom_Sawyer_2.txt";
     private static final String FILE_4 = "The_Adventures_of_Tom_Sawyer_4.txt";
@@ -30,7 +30,7 @@ public class MainJava {
     }
 
     private static List<String> readFromFile(String fileName) {
-        try (Stream<String> lines = Files.lines(Paths.get(Objects.requireNonNull(MainJava.class.getClassLoader().getResource(fileName)).toURI()))) {
+        try (Stream<String> lines = Files.lines(Paths.get(Objects.requireNonNull(MainJavaParallel.class.getClassLoader().getResource(fileName)).toURI()))) {
             return lines.collect(Collectors.toList());
         } catch (URISyntaxException | IOException e) {
             System.out.println("Error in readFromFile() for " + fileName);
@@ -51,7 +51,7 @@ public class MainJava {
         Tuple3<List<Map.Entry<String, Long>>, Long, Long> top10WordsCorpusSizeAndTime_file_4 = countTop10WordsAndTime(file_4);
         Tuple3<List<Map.Entry<String, Long>>, Long, Long> top10WordsCorpusSizeAndTime_file_all = countTop10WordsAndTime(file_all);
 
-        System.out.println("    Java Single Thread");
+        System.out.println("    Java Parallel");
         System.out.println("Single Tom Sawyer: " + top10WordsCorpusSizeAndTime_file._3() + " ms");
         System.out.println("Double Tom Sawyer: " + top10WordsCorpusSizeAndTime_file_2._3() + " ms");
         System.out.println("Quadruple Tom Sawyer: " + top10WordsCorpusSizeAndTime_file_4._3() + " ms");
@@ -70,6 +70,7 @@ public class MainJava {
     private static Stream<String> splitAndCleanLines(List<String> lines) {
         return lines
                 .stream()
+                .parallel()
                 .map(line -> line.split("\\W+"))
                 .flatMap(Stream::of)
                 .map(String::toLowerCase)
@@ -79,6 +80,7 @@ public class MainJava {
 
     private static List<Map.Entry<String, Long>> countWords(Supplier<Stream<String>> words) {
         return words.get()
+                .parallel()
                 .collect(Collectors.groupingBy(String::toString, Collectors.counting()))
                 .entrySet()
                 .stream()
