@@ -66,6 +66,7 @@ public class MainJava {
     private static Stream<String> splitAndCleanLines(List<String> lines) {
         return lines
                 .stream()
+//                .parallel()
                 .map(line -> line.split("\\W+"))
                 .flatMap(Stream::of)
                 .map(String::toLowerCase)
