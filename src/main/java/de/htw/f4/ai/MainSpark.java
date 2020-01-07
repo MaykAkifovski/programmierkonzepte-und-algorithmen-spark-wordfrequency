@@ -33,6 +33,11 @@ public class MainSpark {
     }
 
     public static void main(String[] args) throws IOException, URISyntaxException {
+        int numberOfPartitions = 4;
+
+        if (args.length > 0) {
+            numberOfPartitions = Integer.parseInt(args[0]);
+        }
         SparkConf sparkConf = new SparkConf().setAppName("JavaWordCount").setMaster("local[*]");
         try (JavaSparkContext jsc = new JavaSparkContext(sparkConf)) {
             HelpFunctions helpFunctions = new HelpFunctions();
@@ -42,20 +47,20 @@ public class MainSpark {
             List<String> file_4 = readFromFile(FILE_4);
             List<String> file_all = readFromFile(FILE_ALL);
 
-            Tuple3<List<Tuple2<String, Integer>>, Long, Long> dumy = countTop10WordsAndTime(file, jsc, helpFunctions);
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> dumy = countTop10WordsAndTime(file, numberOfPartitions, jsc, helpFunctions);
             // (<Top10Words and Count>, WordsCountInCorpus, TimeToCompute)
-            Tuple3<List<Tuple2<String, Integer>>, Long, Long> simple_corpus = countTop10WordsAndTime(file, jsc, helpFunctions);
-            Tuple3<List<Tuple2<String, Integer>>, Long, Long> double_corpus = countTop10WordsAndTime(file_2, jsc, helpFunctions);
-            Tuple3<List<Tuple2<String, Integer>>, Long, Long> quadratic_corpus = countTop10WordsAndTime(file_4, jsc, helpFunctions);
-            Tuple3<List<Tuple2<String, Integer>>, Long, Long> all_texts = countTop10WordsAndTime(file_all, jsc, helpFunctions);
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> simple_corpus = countTop10WordsAndTime(file, numberOfPartitions, jsc, helpFunctions);
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> double_corpus = countTop10WordsAndTime(file_2, numberOfPartitions, jsc, helpFunctions);
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> quadratic_corpus = countTop10WordsAndTime(file_4, numberOfPartitions, jsc, helpFunctions);
+            Tuple3<List<Tuple2<String, Integer>>, Long, Long> all_texts = countTop10WordsAndTime(file_all, numberOfPartitions, jsc, helpFunctions);
 
 
             jsc.stop();
         }
     }
 
-    private static Tuple3<List<Tuple2<String, Integer>>, Long, Long> countTop10WordsAndTime(List<String> file, JavaSparkContext jsc, HelpFunctions helpFunctions) {
-        JavaRDD<String> rddLines = jsc.parallelize(file, 4);
+    private static Tuple3<List<Tuple2<String, Integer>>, Long, Long> countTop10WordsAndTime(List<String> file, int numberOfPartitions, JavaSparkContext jsc, HelpFunctions helpFunctions) {
+        JavaRDD<String> rddLines = jsc.parallelize(file, numberOfPartitions);
         long startTime = System.nanoTime();
         JavaRDD<String> rddWords = helpFunctions.splitAndCleanLines(rddLines);
         JavaRDD<Tuple2<String, Integer>> wordsFreqSortedRDD = helpFunctions.countWords(rddWords);

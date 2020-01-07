@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
+        MainSpark.main(new String[]{"4"});
         MainJava.main(null);
-        MainSpark.main(null);
     }
 }
