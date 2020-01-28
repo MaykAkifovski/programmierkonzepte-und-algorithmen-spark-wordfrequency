@@ -35,9 +35,10 @@ public class WordFrequencyJava {
     private static Stream<String> splitAndCleanLines(List<String> text, List<String> stopwords) {
         return text
                 .stream()
-                .map(line -> line.split("\\W+"))
+                .map(line -> line.split(" "))
                 .flatMap(Stream::of)
                 .map(String::toLowerCase)
+                .map(word -> word.replaceAll("[\\W+\\d]", ""))
                 .filter(word -> !stopwords.contains(word));
 
     }

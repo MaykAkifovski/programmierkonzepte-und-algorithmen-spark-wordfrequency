@@ -35,10 +35,11 @@ public class WordFrequencySpark {
 
     public static JavaRDD<String> splitAndCleanLines(JavaRDD<String> rddLines, List<String> stopWords) {
         return rddLines
-                .map(line -> line.split("[\\W+\\d]"))
+                .map(line -> line.split(" "))
                 .map(Arrays::asList)
                 .flatMap(List::iterator)
                 .map(String::toLowerCase)
+                .map(word -> word.replaceAll("[\\W+\\d]", ""))
                 .filter(word -> !stopWords.contains(word));
 
     }

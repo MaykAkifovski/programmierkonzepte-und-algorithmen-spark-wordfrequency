@@ -33,9 +33,10 @@ public class WordFrequencyJavaParallel {
         return text
                 .stream()
                 .parallel()
-                .map(line -> line.split("\\W+"))
+                .map(line -> line.split(" "))
                 .flatMap(Stream::of)
                 .map(String::toLowerCase)
+                .map(word -> word.replaceAll("[\\W+\\d]", ""))
                 .filter(word -> !stopwords.contains(word));
 
     }
