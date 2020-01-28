@@ -12,23 +12,24 @@ import static org.junit.Assert.*;
 
 public class WordFrequencyTest {
 
-    private static final String TEST_BOOK = "test_book.txt";
+    private static final List<String> TEST_BOOK = Utils.readAllFilesFromDirectory("english_runtime_tests/test_book.txt");
+    private static final List<String> STOPWORDS = Utils.readStopwords("english");
     private static final String[] WORDS = {
-            "tom", "huck", "don", "time", "joe", "boys", "boy", "good", "becky", "began"
+            "tom", "huck", "dont", "time", "boys", "joe", "aint", "boy", "began", "ill"
     };
     private static final Long[] WORDS_COUNT = {
-            786L, 251L, 224L, 191L, 164L, 159L, 135L, 113L, 112L, 110L
+            696L, 225L, 223L, 191L, 169L, 133L, 123L, 122L, 110L, 108L
     };
 
     @Test
     public void testJava() {
-        Result result = WordFrequencyJava.run(TEST_BOOK);
+        Result result = WordFrequencyJava.run(TEST_BOOK, STOPWORDS);
         assertResultIsOkay(result);
     }
 
     @Test
     public void testJavaParallel() {
-        Result result = WordFrequencyJavaParallel.run(TEST_BOOK);
+        Result result = WordFrequencyJavaParallel.run(TEST_BOOK, STOPWORDS);
         assertResultIsOkay(result);
     }
 
@@ -38,7 +39,7 @@ public class WordFrequencyTest {
 
         SparkConf sparkConf = new SparkConf().setAppName("JavaWordCount").setMaster("local[*]");
         try (JavaSparkContext jsc = new JavaSparkContext(sparkConf)) {
-            result = WordFrequencySpark.run(TEST_BOOK, 4, jsc);
+            result = WordFrequencySpark.run(TEST_BOOK, STOPWORDS, 4, jsc);
         }
         assertResultIsOkay(result);
     }
@@ -46,7 +47,7 @@ public class WordFrequencyTest {
 
     private void assertResultIsOkay(Result result) {
         assertNotNull(result);
-        assertTrue(result.wordsCountInCorpus == 25324);
+        assertTrue(result.wordsCountInCorpus == 25265);
         assertTop10Words(result.top10Words);
     }
 
