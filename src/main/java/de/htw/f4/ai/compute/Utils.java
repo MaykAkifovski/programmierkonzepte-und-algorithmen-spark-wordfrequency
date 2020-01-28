@@ -2,14 +2,12 @@ package de.htw.f4.ai.compute;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,10 +37,8 @@ public class Utils {
         return text;
     }
 
-    private static Path getResorcesPath(String directoryName) {
-        String resorcePath = Objects.requireNonNull(WordFrequencyJava.class.getClassLoader().getResource(directoryName)).getPath();
-        return FileSystems.getDefault()
-                .getPath(resorcePath);
+    private static Path getResorcesPath(String directoryName) throws URISyntaxException {
+        return Paths.get(Thread.currentThread().getContextClassLoader().getResource(directoryName).toURI());
     }
 
     private static List<String> readAllFilesFromPath(String directoryName, Path configFilePath) throws IOException, URISyntaxException {
