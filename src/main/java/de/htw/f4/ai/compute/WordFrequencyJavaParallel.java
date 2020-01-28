@@ -2,11 +2,9 @@ package de.htw.f4.ai.compute;
 
 import de.htw.f4.ai.result.Result;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -14,39 +12,13 @@ import java.util.stream.Stream;
 
 public class WordFrequencyJavaParallel {
 
-    private static List<String> stopwords;
-
-    private static void readStopWords() {
-        try (Stream<String> lines = Files.lines(Paths.get(Thread.currentThread().getContextClassLoader().getResource("stopwords.txt").toURI()))) {
-            stopwords = lines.collect(Collectors.toList());
-            stopwords.add("");
-        } catch (IOException | URISyntaxException e) {
-            System.out.println("Error in readStopWords()");
-        }
+    public static Result run(List<String> text, List<String> stopwords) {
+        return countTop10WordsAndTime(text, stopwords);
     }
 
-    private static List<String> readFromFile(String fileName) {
-        try (Stream<String> lines = Files.lines(Paths.get(Objects.requireNonNull(WordFrequencyJavaParallel.class.getClassLoader().getResource(fileName)).toURI()))) {
-            return lines.collect(Collectors.toList());
-        } catch (URISyntaxException | IOException e) {
-            System.out.println("Error in readFromFile() for " + fileName);
-            return Collections.emptyList();
-        }
-    }
-
-    public static Result run(String fileName) {
-        readStopWords();
-
-        List<String> file = readFromFile(fileName);
-
-        Result top10WordsCorpusSizeAndTime = countTop10WordsAndTime(file);
-
-        return top10WordsCorpusSizeAndTime;
-    }
-
-    private static Result countTop10WordsAndTime(List<String> lines) {
+    private static Result countTop10WordsAndTime(List<String> text, List<String> stopwords) {
         long startTime = System.nanoTime();
-        Supplier<Stream<String>> words = () -> splitAndCleanLines(lines);
+        Supplier<Stream<String>> words = () -> splitAndCleanLines(text, stopwords);
         List<Map.Entry<String, Long>> wordsFreqSorted = countWords(words);
         long endTime = System.nanoTime();
         long totalTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
@@ -57,8 +29,8 @@ public class WordFrequencyJavaParallel {
         );
     }
 
-    private static Stream<String> splitAndCleanLines(List<String> lines) {
-        return lines
+    private static Stream<String> splitAndCleanLines(List<String> text, List<String> stopwords) {
+        return text
                 .stream()
                 .parallel()
                 .map(line -> line.split("\\W+"))

@@ -27,7 +27,7 @@ public class WordFrequencySpark {
         long totalTime = TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
 
         return new Result(
-                wordsFreqSorted.subList(0, 10),
+                wordsFreqSorted.size() <= 10 ? wordsFreqSorted : wordsFreqSorted.subList(0, 10),
                 rddWords.count(),
                 totalTime
         );
@@ -35,7 +35,7 @@ public class WordFrequencySpark {
 
     public static JavaRDD<String> splitAndCleanLines(JavaRDD<String> rddLines, List<String> stopWords) {
         return rddLines
-                .map(line -> line.split("\\W+"))
+                .map(line -> line.split("[\\W+\\d]"))
                 .map(Arrays::asList)
                 .flatMap(List::iterator)
                 .map(String::toLowerCase)
