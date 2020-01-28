@@ -39,7 +39,7 @@ public class WordFrequencySpark {
                 .map(Arrays::asList)
                 .flatMap(List::iterator)
                 .map(String::toLowerCase)
-                .map(word -> word.replaceAll("[\\W+\\d]", ""))
+                .map(word -> word.replaceAll("[\\s+\\d+\\p{P}]", ""))
                 .filter(word -> !stopWords.contains(word));
 
     }
